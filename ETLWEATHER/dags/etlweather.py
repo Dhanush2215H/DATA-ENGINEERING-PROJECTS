@@ -1,9 +1,10 @@
+from datetime import datetime, timezone
 from airflow import DAG
-from airflow.providers.https.hooks.http import HttpHook #helps to connect to the API
+from airflow.providers.http.hooks.http import HttpHook #helps to connect to the API
 from airflow.providers.postgres.hooks.postgres import PostgresHook #helps to connect to the database
 from airflow.decorators import task # creates a task in airflow DAG
-from airflow.utils.dates import days_ago #helps to set the start date of the DAG
-
+import requests
+import json
 
 # Latitude and longitude for the location (London)
 LATITUDE = '51.5074'
@@ -14,14 +15,14 @@ API_CONN_ID = 'open_meteo_api'  # Connection ID for OpenWeatherMap API
 
 defualt_args = {
     'owner': 'airflow',
-    'start_date': days_ago(1)  # Start date of the DAG
+    'start_date': datetime(2024, 1, 1, tzinfo=timezone.utc)
 }
 
 #DAG
 
 with DAG(dag_id='weather_etl_pipline', 
          default_args=defualt_args,
-         schedule_interval='@daily',  # Run the DAG daily
+         schedule='@daily',  # Run the DAG daily
          catchup=False) as dag:
 
 
